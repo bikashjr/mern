@@ -1,11 +1,17 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
+import dotenv from "dotenv";
 
+dotenv.config();
 const app = express();
 
 const PORT = 5001;
 const MONGO_URL = "mongodb://localhost:27017/mernStack";
+
+import postRoutes from "./routes/postRoutes.js";
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 app.use(cors());
 app.use(express.json());
@@ -13,6 +19,10 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.json("Hello world !!!...");
 });
+
+app.use('/api/auth', authRoutes);
+app.use("/api/posts", postRoutes);
+app.use('/api/users', userRoutes);
 
 const startServer = async () => {
     try {
@@ -30,16 +40,3 @@ const startServer = async () => {
 };
 
 startServer();
-
-// Mongoose connection logs
-mongoose.connection.on("connected", () => {
-    console.log("✅ Mongoose connected to DB");
-});
-
-mongoose.connection.on("error", (err) => {
-    console.error("❌ Mongoose connection error:", err);
-});
-
-mongoose.connection.on("disconnected", () => {
-    console.warn("⚠️ Mongoose disconnected");
-});
